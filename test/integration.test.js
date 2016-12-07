@@ -90,5 +90,61 @@ describe('API endpoints', () => {
             });
     });
 
+    it('throws validation error on application creation', (done) => {
+        supertest(server)
+            .post('/api/applications')
+            .send({ firstname: 'Manny', lastname: 'cat' })
+
+            .end((err, response) => {
+                if (err) {
+                    done(err);
+                }
+                else {
+                    expect(response.status).to.equal(400);
+                    done();
+                }
+            });
+    });
+
+    it('DB: create new application', (done) => {
+        supertest(server)
+            .post('/api/applications')
+            .send({
+                firstname: 'Manny',
+                lastname: 'Smith',
+                gender: 'male',
+                email: 'a@b.com',
+                phone: '123 45 67',
+                age: '33',
+                zip: '12345'
+
+            })
+
+            .end((err, response) => {
+                if (err) {
+                    done(err);
+                }
+                else {
+                    expect(response.status).to.equal(201);
+                    expect(response.type).to.equal('application/json');
+                    done();
+                }
+            });
+    });
+
+    it('get all applications from DB', (done) => {
+        supertest(server)
+            .get('/api/applications')
+            .end((err, response) => {
+                if (err) {
+                    done(err);
+                }
+                else {
+                    expect(response.status).to.equal(200);
+                    expect(response.type).to.equal('application/json');
+                    done();
+                }
+            });
+    });
 
 });

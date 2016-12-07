@@ -2,13 +2,14 @@ const restify = require('restify');
 const bunyan = require('bunyan');
 //import * as assert from 'assert';
 
+
+const cfgPort = 3000;
+
 const logServer = bunyan.createLogger({
     name: 'log',
     level: 'debug',//'trace',
     stream: process.stdout
 });
-
-const cfgPort = 3000;
 
 const server = restify.createServer({
     name: 'REST APIs',
@@ -17,6 +18,10 @@ const server = restify.createServer({
 });
 
 module.exports = server;
+
+const db = require('./db/mongoose');
+var Application = require('./db/Application');
+
 
 server.use(restify.acceptParser(server.acceptable));
 server.use(restify.queryParser());
@@ -80,6 +85,76 @@ function sendV2(req, res, next) {
     return next();
 }
 
+/**
+ * Applications handling
+ */
+server.get('/api/applications', function (req, res, next) {
+    const log = req.log;
+
+    Application.find(function (err, data) {
+        if (!err) {
+            log.debug(`applications found: ${data.length}`);
+            res.json(data);
+            return next();
+        } else {
+            res.statusCode = 500;
+            log.error( { err: err }, `${res.statusCode} ${err.name} '${err.message}'` );
+            res.json({
+                type: 'Server error, after DB call.',
+                error: err
+            });
+            return next(err);
+        }
+    });
+
+});
+
+server.post('/api/applications', function (req, res, next) {
+    const log = req.log;
+
+    let application = new Application({
+
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        gender: req.body.gender,
+        email: req.body.email,
+        phone: req.body.phone,
+        age: req.body.age,
+        zip: req.body.zip
+
+    });
+
+    application.save(function (err) {
+        if (!err) {
+            log.info("Application created with id: %s", application.id);
+            res.json(201, { 'data': application });
+            return next();
+
+        } else {
+
+            if(err.name === 'ValidationError') {
+                res.statusCode = 400;
+                res.json({
+                    type: 'Validation error',
+                    error: err
+                });
+            } else {
+                res.statusCode = 500;
+                res.json({
+                    type: 'DB error',
+                    error: err
+                });
+            }
+            //log.warn({ errors: err.errors }, 'Validation:');
+            log.error( { err: err }, `${res.statusCode} ${err.name} '${err.message}'` );
+
+            return next(err);
+        }
+    });
+
+});
+
+
 server.listen(cfgPort, function () {
-    console.log('%s listening at %s', server.name, server.url);
+    logServer.info('%s listening at %s', server.name, server.url);
 });

@@ -1,5 +1,5 @@
 {
-  "name": "viomedo",
+  "name": "Fullstack-Demo",
   "version": "0.0.1",
   "private": true,
   "author": "Oleksandr Barabanov",
@@ -8,6 +8,7 @@
     "start": "node_modules/.bin/nodemon server.js | bunyan"
   },
   "dependencies": {
+    "mongoose": "^4.7.1",
     "restify": "^4.2.0"
   },
   "devDependencies": {
