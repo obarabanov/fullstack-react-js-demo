@@ -1,17 +1,20 @@
 {
-    "name": "viomedo",
-    "version": "0.0.1",
-    "private": true,
-    "author": "Oleksandr Barabanov",
-    "scripts": {
-    },
-    "dependencies": {
-        "restify": "^4.2.0"
-    },
-    "devDependencies": {
-        "chai": "^3.5.0",
-        "mocha": "^3.1.2",
-        "sinon": "^1.17.6",
-        "supertest": "^2.0.1"
-    }
+  "name": "viomedo",
+  "version": "0.0.1",
+  "private": true,
+  "author": "Oleksandr Barabanov",
+  "scripts": {
+    "test": "_mocha ./test/integration.test.js | bunyan",
+    "start": "node_modules/.bin/nodemon server.js | bunyan"
+  },
+  "dependencies": {
+    "restify": "^4.2.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.1.2",
+    "nodemon": "^1.11.0",
+    "sinon": "^1.17.6",
+    "supertest": "^2.0.1"
+  }
 }

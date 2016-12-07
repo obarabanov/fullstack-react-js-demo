@@ -32,7 +32,7 @@ server.use(restify.bodyParser());
 server.pre(function (req, res, next) {
     const log = req.log;
     log.info(`${req.method.toUpperCase()} ${req.url}`);
-    log.debug({ headers: req.headers }, 'req.Headers:');
+    //log.debug({ headers: req.headers }, 'req.Headers:');
     next();
 });
 
@@ -45,27 +45,21 @@ server.use(function (req, res, next) {
     next();
 });
 
+//  for testing
 server.get('/health', function (req, res, next) {
     res.json(200, { 'health': 'ok' });
     return next();
 });
 
-//  Tested - OK
-//  /public
-//  /public/
-// server.get(/\/public\/?.*/, restify.serveStatic({
-//     directory: __dirname, //  Tested - OK
-//     default: 'default.json'
-// }));
-
-
-const dataDir = './test/raven/data';
-
-server.get('/fieldcomputers', restify.serveStatic({
-    directory: dataDir,
-    file: 'fieldcomputers.json'
+//  static resources
+server.get('/', restify.serveStatic({
+    directory: './public',
+    file: 'application.html'
 }));
-
+server.get(/\/public\/?.*/, restify.serveStatic({
+    directory: __dirname,
+    default: 'application.html'
+}));
 
 server.listen(cfgPort, function () {
     console.log('%s listening at %s', server.name, server.url);
