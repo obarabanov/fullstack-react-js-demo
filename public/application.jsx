@@ -24,7 +24,8 @@ class ApplicationForm extends React.Component {
             phone: '',
             age: '',        // (1-99)
             zip: '',        // (min 3 , max 5 digits)
-            termsAccepted: false
+            termsAccepted: false,
+            wasSuccessful: false
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -84,51 +85,89 @@ class ApplicationForm extends React.Component {
 
     handleSubmit(event) {
 
-        //  TODO:   - Show a success message and hide the form when the form was submitted successfully
-
-        console.log(`Form submitted by: ${this.state.firstname} ${this.state.lastname}`);
         event.preventDefault();
+
+        //  action="/api/applications" method="post"
+        let request = new XMLHttpRequest();
+        request.open('POST', '/api/applications', true);
+        request.setRequestHeader("Content-type", "application/json");
+        const ctx = this;
+        request.onreadystatechange = function() {
+            if(request.readyState == XMLHttpRequest.DONE) {
+                if (request.status == 201) {
+                    //  - Show a success message and hide the form when the form was submitted successfully
+                    console.log("SUCCESS: %s", request.responseText);
+                    ctx.setState({wasSuccessful: true});
+                } else {
+                    console.log(`ERROR: ${request.status} ${request.statusText}`);
+                    console.log(`Response: ${request.responseText}`);   // TODO: server's response can be parsed & handled
+                }
+            }
+        }
+        request.send( JSON.stringify(this.state) );
+
+        //console.log(`Form submitted by: ${this.state.firstname} ${this.state.lastname}`);
+        console.log(`Request sent.`);
     }
 
     render() {
-        return (
-            <form onSubmit={this.handleSubmit}>
 
-                <label htmlFor="firstname">Firstname:</label>
-                <input id="firstname" type="text" value={this.state.firstname} onChange={this.handleChange} required />
-                <br/>
-                <label htmlFor="lastname">Lastname:</label>
-                <input id="lastname" type="text" value={this.state.lastname} onChange={this.handleChange} required />
-                <br/>
-                <label htmlFor="gender">Gender:</label>
-                <select id="gender" value={this.state.gender} onChange={this.handleChange} required>
-                    <option value="">-- Select</option>
-                    <option value="female">Female</option>
-                    <option value="male">Male</option>
-                </select>
-                <br/>
-                <label htmlFor="age">Age:</label>
-                <input id="age" type="number" min="1" max="99" value={this.state.age} onChange={this.handleChange} required />
-                <br/>
-                <label htmlFor="email">Email:</label>
-                <input id="email" type="email" value={this.state.email} onChange={this.handleChange} required />
-                <br/>
-                <label htmlFor="phone">Phone:</label>
-                <input id="phone" type="text" value={this.state.phone} onChange={this.handleChange} required />
-                <br/>
-                <label htmlFor="zip">Zip:</label>
-                <input id="zip" type="number" value={this.state.zip} onChange={this.handleChange} required
-                       placeholder="min 3, max 5 digits" onInput={this.validateZip}/>
-                <br/><br/>
+        let done = this.state.wasSuccessful;
+        if (done == true) {
 
-                <label htmlFor="termsAccepted">I Accept Terms:</label>
-                <input id="termsAccepted" type="checkbox" onChange={this.handleChange} required />
-                <br/><br/>
+            return (
+                <div>
+                    <h3>Thanks !</h3>
+                    <p>Your application was saved successfully.</p>
+                    <br/>
+                    <a href="/">Go to Home Page</a>
+                </div>
+            );
 
-                <input type="submit" value="Submit" />
+        } else {
 
-            </form>
-        );
+            return (
+                <form onSubmit={this.handleSubmit}>
+
+                    <label htmlFor="firstname">Firstname:</label>
+                    <input id="firstname" type="text" value={this.state.firstname} onChange={this.handleChange}
+                           required/>
+                    <br/>
+                    <label htmlFor="lastname">Lastname:</label>
+                    <input id="lastname" type="text" value={this.state.lastname} onChange={this.handleChange} required/>
+                    <br/>
+                    <label htmlFor="gender">Gender:</label>
+                    <select id="gender" value={this.state.gender} onChange={this.handleChange} required>
+                        <option value="">-- Select</option>
+                        <option value="female">Female</option>
+                        <option value="male">Male</option>
+                    </select>
+                    <br/>
+                    <label htmlFor="age">Age:</label>
+                    <input id="age" type="number" min="1" max="99" value={this.state.age} onChange={this.handleChange}
+                           required/>
+                    <br/>
+                    <label htmlFor="email">Email:</label>
+                    <input id="email" type="email" value={this.state.email} onChange={this.handleChange} required/>
+                    <br/>
+                    <label htmlFor="phone">Phone:</label>
+                    <input id="phone" type="text" value={this.state.phone} onChange={this.handleChange} required/>
+                    <br/>
+                    <label htmlFor="zip">Zip:</label>
+                    <input id="zip" type="number" value={this.state.zip} onChange={this.handleChange} required
+                           placeholder="min 3, max 5 digits" onInput={this.validateZip}/>
+                    <br/><br/>
+
+                    <label htmlFor="termsAccepted">I Accept Terms:</label>
+                    <input id="termsAccepted" type="checkbox" onChange={this.handleChange} required/>
+                    <br/><br/>
+
+                    <input type="submit" value="Submit"/>
+
+                </form>
+
+            );
+        }
     }
 }
 
