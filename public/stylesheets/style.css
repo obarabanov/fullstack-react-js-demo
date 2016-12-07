@@ -1,1 +1,21 @@
 body{padding:50px;font:14px "Lucida Grande",Helvetica,Arial,sans-serif}a{color:#00B7FF}
+
+/*
+form {
+    width: 100%;
+}
+*/
+
+form input[type="submit"] {
+    text-align: center;
+    width: 160px;
+    margin-left: 180px;
+
+}
+
+label {
+    display: inline-block;
+    width: 160px;
+    text-align: right;
+    padding-right: 10px;
+}​

@@ -23,7 +23,7 @@ class ApplicationForm extends React.Component {
             email: '',      // (email format)
             phone: '',
             age: '',        // (1-99)
-            zip: '',        // TODO:    (min 3 , max 5 digits)
+            zip: '',        // (min 3 , max 5 digits)
             termsAccepted: false
         };
 
@@ -65,40 +65,28 @@ class ApplicationForm extends React.Component {
         }
     }
 
-    /**/
-    validateForm(event) {
+    validateZip(event) {
+        const elZip = event.target;
+        const vZip = elZip.value;
 
         //  pattern="\d{3,5}"
+        //var constraint = /\d{3,5}/;
+        //console.log(constraint);
+        //if (constraint.test(vZip)) {
 
-        const elZip = document.getElementById('zip');
-        const vZip = elZip.value;
-        console.log(`validity.valid = ${elZip.validity.valid}`);
-        console.log(`validity.badInput = ${elZip.validity.badInput}`);
         if (vZip.length < 3 || vZip.length > 5) {
-            //elZip.validity.typeMismatch = true; //  TypeError: Cannot assign to read only property 'typeMismatch' of object '#<ValidityState>'
-            //elZip.validity.valid = false;
-
-            elZip.checkValidity()
-
-            elZip.setCustomValidity( 'zip (min 3 , max 5 digits)' );
-            return false;
+            elZip.setCustomValidity( 'Zip code (min 3, max 5 digits)' );
         } else {
             elZip.setCustomValidity('');
         }
-        return true;
+        console.log(`validity.valid = ${elZip.validity.valid} value: ${vZip}`);
     }
-    /**/
 
     handleSubmit(event) {
 
-        const isValid = this.validateForm();
-        console.log(`form.isValid = ${isValid}`);
-        if (!isValid) {
-            return false;
-        }
+        //  TODO:   - Show a success message and hide the form when the form was submitted successfully
 
-        //alert('A name was submitted: ' + this.state.firstname);
-        console.log(`Form submitted: ${this.state.firstname} ${this.state.lastname}`);
+        console.log(`Form submitted by: ${this.state.firstname} ${this.state.lastname}`);
         event.preventDefault();
     }
 
@@ -106,56 +94,39 @@ class ApplicationForm extends React.Component {
         return (
             <form onSubmit={this.handleSubmit}>
 
-                <label>
-                    Zip:
-                    <input id="zip" type="number" value={this.state.zip} onChange={this.handleChange} required placeholder="min 3, max 5 digits" />
-                </label>
+                <label htmlFor="firstname">Firstname:</label>
+                <input id="firstname" type="text" value={this.state.firstname} onChange={this.handleChange} required />
+                <br/>
+                <label htmlFor="lastname">Lastname:</label>
+                <input id="lastname" type="text" value={this.state.lastname} onChange={this.handleChange} required />
+                <br/>
+                <label htmlFor="gender">Gender:</label>
+                <select id="gender" value={this.state.gender} onChange={this.handleChange} required>
+                    <option value="">-- Select</option>
+                    <option value="female">Female</option>
+                    <option value="male">Male</option>
+                </select>
+                <br/>
+                <label htmlFor="age">Age:</label>
+                <input id="age" type="number" min="1" max="99" value={this.state.age} onChange={this.handleChange} required />
+                <br/>
+                <label htmlFor="email">Email:</label>
+                <input id="email" type="email" value={this.state.email} onChange={this.handleChange} required />
+                <br/>
+                <label htmlFor="phone">Phone:</label>
+                <input id="phone" type="text" value={this.state.phone} onChange={this.handleChange} required />
+                <br/>
+                <label htmlFor="zip">Zip:</label>
+                <input id="zip" type="number" value={this.state.zip} onChange={this.handleChange} required
+                       placeholder="min 3, max 5 digits" onInput={this.validateZip}/>
+                <br/><br/>
 
-                <label>
-                    Firstname:
-                    <input id="firstname" type="text" value={this.state.firstname} onChange={this.handleChange} required />
-                </label>
-                <br/>
-                <label>
-                    Lastname:
-                    <input id="lastname" type="text" value={this.state.lastname} onChange={this.handleChange} required />
-                </label>
-                <br/>
-
-                <label>
-                    Gender:
-                    <select id="gender" value={this.state.gender} onChange={this.handleChange} required>
-                        <option value="">-- Select</option>
-                        <option value="female">Female</option>
-                        <option value="male">Male</option>
-                    </select>
-                </label>
-                <br/>
-                <label>
-                    Age:
-                    <input id="age" type="number" min="1" max="99" value={this.state.age} onChange={this.handleChange} required />
-                </label>
-                <br/>
-
-                <label>
-                    Email:
-                    <input id="email" type="email" value={this.state.email} onChange={this.handleChange} required />
-                </label>
-                <br/>
-                <label>
-                    Phone:
-                    <input id="phone" type="text" value={this.state.phone} onChange={this.handleChange} required />
-                </label>
-                <br/>
-                <br/>
-
-                <label>
-                    I Accept Terms:
-                    <input id="termsAccepted" type="checkbox" onChange={this.handleChange} required />
-                </label>
-                <br/>
+                <label htmlFor="termsAccepted">I Accept Terms:</label>
+                <input id="termsAccepted" type="checkbox" onChange={this.handleChange} required />
+                <br/><br/>
 
                 <input type="submit" value="Submit" />
+
             </form>
         );
     }
