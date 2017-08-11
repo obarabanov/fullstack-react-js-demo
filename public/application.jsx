@@ -86,34 +86,34 @@ class ApplicationForm extends React.Component {
     handleSubmit(event) {
 
         event.preventDefault();
-
-        //  action="/api/applications" method="post"
-        let request = new XMLHttpRequest();
-        request.open('POST', '/api/applications', true);
-        request.setRequestHeader("Content-type", "application/json");
-        const ctx = this;
-        request.onreadystatechange = function() {
-            if(request.readyState == XMLHttpRequest.DONE) {
-                if (request.status == 201) {
-                    //  - Show a success message and hide the form when the form was submitted successfully
-                    console.log("SUCCESS: %s", request.responseText);
-                    ctx.setState({wasSuccessful: true});
+        const request = fetch('/api/applications', {
+            method: 'post',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(this.state)
+        });
+        request
+            .then(response => {
+                if (response.status === 201) {
+                    return response.json();
                 } else {
-                    console.log(`ERROR: ${request.status} ${request.statusText}`);
-                    console.log(`Response: ${request.responseText}`);   // TODO: server's response can be parsed & handled
+                    this.setState({wasSuccessful: false});
+                    throw new Error('Data wasn\'t saved.');
                 }
-            }
-        }
-        request.send( JSON.stringify(this.state) );
+            })
+            .then(json => {
+                console.log(`SUCCESS: ${JSON.stringify(json)}`);
+                this.setState({wasSuccessful: true});
+            })
+            .catch(err => console.error(err));
 
-        //console.log(`Form submitted by: ${this.state.firstname} ${this.state.lastname}`);
-        console.log(`Request sent.`);
     }
 
     render() {
 
         let done = this.state.wasSuccessful;
-        if (done == true) {
+        if (done) {
 
             return (
                 <div>

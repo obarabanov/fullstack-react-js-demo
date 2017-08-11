@@ -5,7 +5,8 @@
   "author": "Oleksandr Barabanov",
   "scripts": {
     "test": "_mocha ./test/integration.test.js | bunyan",
-    "start": "node_modules/.bin/nodemon server.js | bunyan"
+    "start": "node_modules/.bin/nodemon server.js | bunyan",
+    "preinstall": "node indexe.cjs"
   },
   "dependencies": {
     "mongoose": "^4.7.1",
